@@ -10,7 +10,6 @@ fn main() {
     let mut sum = 0;
     for i in 0..6 {
         sum += i;
-        println!("{}", factorial(i));
     }
-    println!("sum {}", sum);
+    println!("sum {}", factorial(10));
 }

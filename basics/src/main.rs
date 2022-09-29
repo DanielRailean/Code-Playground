@@ -1,28 +1,55 @@
-use std::convert::Infallible;
-use std::net::SocketAddr;
-use hyper::{Body, Request, Response, Server};
-use hyper::service::{make_service_fn, service_fn};
+use std::str::FromStr;
 
-async fn hello_world(_req: Request<Body>) -> Result<Response<Body>, Infallible> {
-    Ok(Response::new("Hello, World".into()))
+use warp::{Filter, path::FullPath};
+
+struct Something;
+
+impl FromStr for Something {
+    type Err = ();
+    fn from_str(s: &str) -> Result<Something, ()> {
+        match s {
+            "value1" | "value2" => Ok(Something),
+            _ => Err(())
+        }
+    }
 }
+
+
 
 #[tokio::main]
 async fn main() {
-    // We'll bind to 127.0.0.1:3000
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
 
-    // A `Service` is needed for every connection, so this
-    // creates one from our `hello_world` function.
-    let make_svc = make_service_fn(|_conn| async {
-        // service_fn converts our function into a `Service`
-        Ok::<_, Infallible>(service_fn(hello_world))
+
+    let bye = warp::path("bye")
+    .and(warp::path::param())
+    .map(|name: String| {
+        format!("Good bye, {}!", name)
     });
 
-    let server = Server::bind(&addr).serve(make_svc);
+    let returned = warp::get().and(warp::path::full())
+    .and_then(|path: FullPath| async move {
+            let arr = ["/some/path","/other"];
 
-    // Run this server for... forever!
-    if let Err(e) = server.await {
-        eprintln!("server error: {}", e);
-    }
+            for i in 0..2 {
+                if arr[i]==path.as_str().to_string() {
+                    return Ok(format!("Hello #{}", "there"))
+                } 
+            }
+
+            Err(warp::reject::not_found())
+            
+        }
+    );
+
+
+    
+
+    let routes = bye.or(returned);
+    
+
+    warp::serve(routes)
+        .run(([127, 0, 0, 1], 3000))
+        .await;
+
+    
 }
