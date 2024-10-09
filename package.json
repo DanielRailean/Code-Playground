@@ -1,0 +1,21 @@
+{
+  "name": "code-playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "basic-ftp": "^5.0.5",
+    "express": "^4.21.1",
+    "qusly-core": "^4.0.4",
+    "youtube-mp3-downloader": "^0.7.11",
+    "ytdl-core": "^4.11.5",
+    "ytdl-mp3": "^5.0.0"
+  }
+}
